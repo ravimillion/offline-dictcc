@@ -43,7 +43,7 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     }
 
     public void onCreate() {
-        Toast.makeText(getApplicationContext(), "OfflineDick Started", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "OfflineDict Started", Toast.LENGTH_SHORT).show();
         dictPath = Environment.getExternalStorageDirectory() + File.separator + "Dictionary" + File.separator + "dict.txt";
         dictionary = new Dictionary(dictPath);
         clipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
@@ -51,7 +51,7 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     }
 
     public void onDestroy() {
-        Toast.makeText(getApplicationContext(), "OfflineDick Stopped", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "OfflineDict Stopped", Toast.LENGTH_SHORT).show();
         clipBoard.removePrimaryClipChangedListener(this);
     }
 
@@ -65,10 +65,20 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
         Log.d(TAG, "Results returned");
         return this.results;
     }
+    public String getSearchKey() {
+        return lastSearchKey;
+    }
+
+    public TreeMap<String, String> searchAndGetResults(String searchKey) {
+        lastSearchKey = searchKey;
+        this.results = dictionary.getTranslation(searchKey);
+
+        return this.results;
+
+    }
+
 
     public void onPrimaryClipChanged() {
-        Toast.makeText(getApplicationContext(), "Searching...", Toast.LENGTH_SHORT).show();
-
         ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
         CharSequence copiedText = item.getText();
 
@@ -78,12 +88,10 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
         }
 
         Log.d(TAG, "Searching for... " + copiedText.toString());
-        lastSearchKey = copiedText.toString();
-
-        this.results = dictionary.getTranslation(copiedText.toString());
+        this.results = searchAndGetResults(copiedText.toString());
         if (results.keySet().size() == 0) {
-            Toast.makeText(getApplicationContext(), "Nothing found", Toast.LENGTH_LONG).show();
             Log.d(TAG, "Nothing found");
+            Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();
             return;
         } else {
             Log.d(TAG, "Total results: " + results.size());

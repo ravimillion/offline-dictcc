@@ -1,5 +1,7 @@
 package com.example.raviz.offlinedictcc;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -25,9 +29,11 @@ import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
+    private Button button = null;
+    private ListView listView = null;
+    private EditText editText = null;
     private DictService mBoundService;
     private boolean mServiceBound = false;
-    private int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,16 +42,38 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "###################Starting main activity########################");
         startService(new Intent(this, DictService.class));
-        Log.d(TAG, "On create Counter value: " + counter++);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        listView = (ListView) findViewById(R.id.listView);
+        button = (Button) findViewById(R.id.button);
+
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                EditText editText = (EditText) findViewById(R.id.editText);
+                String searchKey = editText.getText().toString();
+                if (searchKey.length() > 3) {
+                    button.setVisibility(View.INVISIBLE);
+                    Snackbar.make(listView, "Searching...", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    if (mBoundService != null ) {
+                        TreeMap<String, String> results = mBoundService.searchAndGetResults(searchKey);
+                        updateListView(results);
+                    }
+                } else {
+                    Snackbar.make(listView, "Word too short", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
             }
         });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         setupToolbar();
     }
@@ -59,6 +87,32 @@ public class MainActivity extends AppCompatActivity {
 //        ab.setDisplayHomeAsUpEnabled(true);
     }
 
+    public void updateListView(TreeMap<String, String> results) {
+        String searchKey = mBoundService.getSearchKey();
+
+        listView = (ListView) findViewById(R.id.listView);
+        editText = (EditText) findViewById(R.id.editText);
+        button = (Button) findViewById(R.id.button);
+
+        editText.setText(searchKey);
+        if (results != null) {
+            Set<String> keySet = results.keySet();
+
+            String[] keysArray = Arrays.copyOf(keySet.toArray(), keySet.toArray().length, String[].class);
+            String[] valuesArray = new String[keysArray.length];
+
+            for (int i = 0; i < keysArray.length; i++) {
+                valuesArray[i] = results.get(keysArray[i]).toString();
+                keysArray[i] = cleanUUID(keysArray[i]);
+            }
+
+            DictEntryAdapter dictEntryAdapter = new DictEntryAdapter(this, keysArray, valuesArray);
+            listView.setAdapter(dictEntryAdapter);
+            Snackbar.make(listView, "Found " + results.size() + " entries", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+        button.setVisibility(View.VISIBLE);
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -68,34 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (mBoundService != null) {
             TreeMap<String, String> results = mBoundService.getResults();
-
-
-            ListView listView = (ListView) findViewById(R.id.listView);
-
-            if (results != null) {
-                Set<String> keySet = results.keySet();
-
-                String[] keysArray = Arrays.copyOf(keySet.toArray(), keySet.toArray().length, String[].class);
-                String[] valuesArray = new String[keysArray.length];
-
-                for (int i = 0; i < keysArray.length; i++) {
-                    valuesArray[i] = results.get(keysArray[i]).toString();
-                    keysArray[i] = cleanUUID(keysArray[i]);
-                }
-
-                DictEntryAdapter dictEntryAdapter = new DictEntryAdapter(this, keysArray, valuesArray);
-                listView.setAdapter(dictEntryAdapter);
-                Snackbar.make(listView, "Found " + results.size() + " entries", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-
-
-        } else {
-//        ListView listView = (ListView) findViewById(R.id.listView);
-//        String[] keys = {"Empty"};
-//        String[] values = {"Results"};
-//        DictEntryAdapter dictEntryAdapter = new DictEntryAdapter(this, keys, values);
-//        listView.setAdapter(dictEntryAdapter);
+            updateListView(results);
         }
 
     }

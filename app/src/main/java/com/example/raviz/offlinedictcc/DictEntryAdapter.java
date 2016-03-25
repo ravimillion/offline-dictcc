@@ -30,7 +30,7 @@ public class DictEntryAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        Log.d(TAG, "Position: " + position);
+
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.rowlayout, null, true);
 
