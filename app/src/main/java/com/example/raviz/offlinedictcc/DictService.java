@@ -72,7 +72,6 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     public TreeMap<String, String> searchAndGetResults(String searchKey) {
         lastSearchKey = searchKey;
         this.results = dictionary.getTranslation(searchKey);
-
         return this.results;
 
     }
@@ -82,13 +81,12 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
         ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
         CharSequence copiedText = item.getText();
 
-        if (lastSearchKey.equals(copiedText)) {
-            Log.d(TAG, "Repeating search term");
-            return;
-        }
+        if (lastSearchKey.equals(copiedText) || copiedText == null) return;
 
-        Log.d(TAG, "Searching for... " + copiedText.toString());
+        Log.d(TAG, "Copied Text: " + copiedText);
+
         this.results = searchAndGetResults(copiedText.toString());
+
         if (results.keySet().size() == 0) {
             Log.d(TAG, "Nothing found");
             Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();

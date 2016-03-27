@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -17,10 +18,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,15 +37,16 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView = null;
     private EditText editText = null;
     private DictService mBoundService;
-    private boolean mServiceBound = false;
+    private TreeMap<String, String> results = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Log.d(TAG, "###################Starting main activity########################");
-        startService(new Intent(this, DictService.class));
+        // start service
+        Intent intent = new Intent(this, DictService.class);
+        startService(intent);
+        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         listView = (ListView) findViewById(R.id.listView);
         button = (Button) findViewById(R.id.button);
@@ -52,13 +57,9 @@ public class MainActivity extends AppCompatActivity {
                 EditText editText = (EditText) findViewById(R.id.editText);
                 String searchKey = editText.getText().toString();
                 if (searchKey.length() > 3) {
-                    button.setVisibility(View.INVISIBLE);
                     Snackbar.make(listView, "Searching...", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    if (mBoundService != null ) {
-                        TreeMap<String, String> results = mBoundService.searchAndGetResults(searchKey);
-                        updateListView(results);
-                    }
+                    searchResults(searchKey);
                 } else {
                     Snackbar.make(listView, "Word too short", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
@@ -76,6 +77,32 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         setupToolbar();
+    }
+
+    private void searchResults(String sk) {
+        final String searchKey = sk;
+
+        new Thread() {
+            @Override
+            public void run() {
+                Snackbar.make(listView, "Searching...", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                if (mBoundService != null) {
+                    results = mBoundService.searchAndGetResults(searchKey);
+                    try {
+                        // code runs in a thread
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateListView(results);
+                            }
+                        });
+                    } catch (final Exception ex) {
+                        Log.i("---", "Exception in thread");
+                    }
+                }
+            }
+        }.start();
     }
 
     private void setupToolbar() {
@@ -116,12 +143,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, DictService.class);
-        startService(intent);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+//        Intent intent = new Intent(this, DictService.class);
+//        startService(intent);
+//        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         if (mBoundService != null) {
-            TreeMap<String, String> results = mBoundService.getResults();
+            results = mBoundService.getResults();
             updateListView(results);
         }
 
@@ -130,14 +157,13 @@ public class MainActivity extends AppCompatActivity {
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mServiceBound = false;
+            mBoundService = null;
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             DictService.LocalBinder myBinder = (DictService.LocalBinder) service;
             mBoundService = myBinder.getService();
-            mServiceBound = true;
         }
     };
 

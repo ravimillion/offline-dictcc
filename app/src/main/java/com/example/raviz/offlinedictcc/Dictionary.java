@@ -6,9 +6,12 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
@@ -34,31 +37,32 @@ public class Dictionary {
         return file;
     }
 
-    public HashMap<String, String> getResults(String searchKey, File file) {
-        HashMap<String, String> results = new HashMap<>();
+    private TreeMap<String, String> getResults(String searchKey, File file) {
+        TreeMap<String, String> results = new TreeMap<>();
         String line = null;
         boolean limitFlag = false;
         int totalResults = 0;
         try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String command = "grep " + searchKey + " " + dictPath;
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             while ((line = br.readLine()) != null) {
                 String l = line.toString();
                 int tabIndex = l.indexOf('\t');
-                if (tabIndex > 0) {
+
+                if (tabIndex > 0 && l.substring(0, tabIndex).indexOf(searchKey) > -1) {
                     String k = l.substring(0, tabIndex);
                     String v = l.substring(tabIndex + 1);
 
                     if (k.indexOf(searchKey) > -1) {
-                        if (k.length() < (searchKey.length() + TYPE_LENGTH)) {
-                            limitFlag = true;
+                        for (int index = l.indexOf('\t'); index >= 0; index = l.indexOf('\t', index + 1)) {
+
                         }
+
                         results.put(UUID.randomUUID().toString() + k, v);
                         totalResults++;
-
-                        if (limitFlag && totalResults > 50) {
-                            break;
-                        }
                     }
                 }
             }
@@ -69,7 +73,7 @@ public class Dictionary {
     }
 
 
-    public TreeMap<String, String> sortResultsByKeyLength(HashMap<String, String> results) {
+    public TreeMap<String, String> sortResultsByKeyLength(TreeMap<String, String> results) {
 
         TreeMap<String, String> sortedResults = new TreeMap<String, String>(
                 new Comparator<String>() {
@@ -91,49 +95,66 @@ public class Dictionary {
         return sortedResults;
     }
 
+    public String processSearchKey(String searchKey) {
+        searchKey = searchKey.replaceAll("ae", "ä");
+        searchKey = searchKey.replaceAll("AE", "Ä");
+
+        searchKey = searchKey.replaceAll("ue", "ü");
+        searchKey = searchKey.replaceAll("UE", "Ü");
+
+        searchKey = searchKey.replaceAll("oe", "ö");
+        searchKey = searchKey.replaceAll("OE", "Ö");
+
+        System.out.println("New search key: " + searchKey);
+        return searchKey;
+    }
+
     public TreeMap<String, String> getTranslation(String searchKey) {
         File file = getDictSourceFile();
         if (file == null) return null;
 
-        HashMap<String, String> rawResults = getResults(searchKey, file);
-
-        // check for past tense verbs
-        if (rawResults.size() < 10) {
-            if (searchKey.endsWith("ten")) {
-                searchKey = searchKey.substring(0, searchKey.lastIndexOf("ten")) + "n"; // arbeiteten -> arbeiten
-                Log.d(TAG, "Intelligent Search ten->n: " + searchKey);
-                HashMap<String, String> results = getResults(searchKey, file);
-                rawResults.putAll(results);
-            }
-        }
-        if (rawResults.size() < 10) {
-            if (searchKey.endsWith("test")) {
-                searchKey = searchKey.substring(0, searchKey.lastIndexOf("test")) + "en"; // arbeiteten -> arbeiten
-                Log.d(TAG, "Intelligent Search test->en: " + searchKey);
-                HashMap<String, String> results = getResults(searchKey, file);
-                rawResults.putAll(results);
-            }
-        }
-        if (rawResults.size() < 10) {
-            if (searchKey.endsWith("test")) {
-                searchKey = searchKey.substring(0, searchKey.lastIndexOf("tet")) + "en"; // arbeiteten -> arbeiten
-                Log.d(TAG, "Intelligent Search tet->en: " + searchKey);
-                HashMap<String, String> results = getResults(searchKey, file);
-                rawResults.putAll(results);
-            }
-        }
-        if (rawResults.size() < 10) {
-            if (searchKey.startsWith("ge") && searchKey.endsWith("t")) {
-                searchKey = searchKey.replaceFirst("ge", "");
-                searchKey = searchKey.substring(0, searchKey.lastIndexOf("t")) + "en";
-                Log.d(TAG, "Intelligent Search preteritum: " + searchKey);
-                HashMap<String, String> results = getResults(searchKey, file);
-                rawResults.putAll(results);
-            }
-        }
-
-
+        searchKey = processSearchKey(searchKey);
+        TreeMap<String, String> rawResults = getResults(searchKey, file);
         TreeMap<String, String> results = sortResultsByKeyLength(rawResults);
         return results;
+
+        // check for past tense verbs
+//        if (rawResults.size() < 10) {
+//            if (searchKey.endsWith("ten")) {
+//                searchKey = searchKey.substring(0, searchKey.lastIndexOf("ten")) + "n"; // arbeiteten -> arbeiten
+//                Log.d(TAG, "Intelligent Search ten->n: " + searchKey);
+//                HashMap<String, String> results = getResults(searchKey, file);
+//                rawResults.putAll(results);
+//            }
+//        }
+//        if (rawResults.size() < 10) {
+//            if (searchKey.endsWith("test")) {
+//                searchKey = searchKey.substring(0, searchKey.lastIndexOf("test")) + "en"; // arbeiteten -> arbeiten
+//                Log.d(TAG, "Intelligent Search test->en: " + searchKey);
+//                HashMap<String, String> results = getResults(searchKey, file);
+//                rawResults.putAll(results);
+//            }
+//        }
+//        if (rawResults.size() < 10) {
+//            if (searchKey.endsWith("test")) {
+//                searchKey = searchKey.substring(0, searchKey.lastIndexOf("tet")) + "en"; // arbeiteten -> arbeiten
+//                Log.d(TAG, "Intelligent Search tet->en: " + searchKey);
+//                HashMap<String, String> results = getResults(searchKey, file);
+//                rawResults.putAll(results);
+//            }
+//        }
+//        if (rawResults.size() < 10) {
+//            if (searchKey.startsWith("ge") && searchKey.endsWith("t")) {
+//                searchKey = searchKey.replaceFirst("ge", "");
+//                searchKey = searchKey.substring(0, searchKey.lastIndexOf("t")) + "en";
+//                Log.d(TAG, "Intelligent Search preteritum: " + searchKey);
+//                HashMap<String, String> results = getResults(searchKey, file);
+//                rawResults.putAll(results);
+//            }
+//        }
+
+
+//        TreeMap<String, String> results = sortResultsByKeyLength(rawResults);
+//        return results;
     }
 }
