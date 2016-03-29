@@ -26,6 +26,7 @@ import java.util.TreeMap;
 public class DictService extends Service implements ClipboardManager.OnPrimaryClipChangedListener {
     public String TAG = DictService.class.toString();
     public String lastSearchKey = new String("dummy");
+    public String searchKey = null;
     public String dictPath = null;
     public Dictionary dictionary = null;
     public ClipboardManager clipBoard = null;
@@ -63,14 +64,23 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
 
     public TreeMap<String, String> getResults() {
         Log.d(TAG, "Results returned");
+//        this.results = searchAndGetResults(this.searchKey);
+//
+        if (this.results !=  null && this.results.keySet().size() == 0) {
+            Log.d(TAG, "Nothing found");
+            Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();
+            return null;
+        } else {
+            Log.d(TAG, "Total results: " + results.size());
+        }
         return this.results;
     }
     public String getSearchKey() {
-        return lastSearchKey;
+        return this.searchKey;
     }
 
     public TreeMap<String, String> searchAndGetResults(String searchKey) {
-        lastSearchKey = searchKey;
+        this.lastSearchKey = searchKey;
         this.results = dictionary.getTranslation(searchKey);
         return this.results;
 
@@ -84,16 +94,17 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
         if (lastSearchKey.equals(copiedText) || copiedText == null) return;
 
         Log.d(TAG, "Copied Text: " + copiedText);
+        this.searchKey = copiedText.toString();
 
-        this.results = searchAndGetResults(copiedText.toString());
-
-        if (results.keySet().size() == 0) {
-            Log.d(TAG, "Nothing found");
-            Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();
-            return;
-        } else {
-            Log.d(TAG, "Total results: " + results.size());
-        }
+//        this.results = searchAndGetResults(copiedText.toString());
+//
+//        if (results.keySet().size() == 0) {
+//            Log.d(TAG, "Nothing found");
+//            Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();
+//            return;
+//        } else {
+//            Log.d(TAG, "Total results: " + results.size());
+//        }
 
         activateActivity();
     }

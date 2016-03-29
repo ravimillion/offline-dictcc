@@ -40,10 +40,8 @@ public class Dictionary {
     private TreeMap<String, String> getResults(String searchKey, File file) {
         TreeMap<String, String> results = new TreeMap<>();
         String line = null;
-        boolean limitFlag = false;
-        int totalResults = 0;
-        try {
 
+        try {
             String command = "grep " + searchKey + " " + dictPath;
             Process process = Runtime.getRuntime().exec(command);
             BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -52,18 +50,10 @@ public class Dictionary {
                 String l = line.toString();
                 int tabIndex = l.indexOf('\t');
 
-                if (tabIndex > 0 && l.substring(0, tabIndex).indexOf(searchKey) > -1) {
+                if (tabIndex > 0) {
                     String k = l.substring(0, tabIndex);
                     String v = l.substring(tabIndex + 1);
-
-                    if (k.indexOf(searchKey) > -1) {
-                        for (int index = l.indexOf('\t'); index >= 0; index = l.indexOf('\t', index + 1)) {
-
-                        }
-
-                        results.put(UUID.randomUUID().toString() + k, v);
-                        totalResults++;
-                    }
+                    results.put(UUID.randomUUID().toString() + k, v);
                 }
             }
         } catch (IOException e) {

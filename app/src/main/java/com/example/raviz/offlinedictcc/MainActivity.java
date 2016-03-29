@@ -81,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void searchResults(String sk) {
         final String searchKey = sk;
-
+        EditText editText = (EditText) findViewById(R.id.editText);
+        editText.setText(sk);
         new Thread() {
             @Override
             public void run() {
@@ -143,15 +144,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        Intent intent = new Intent(this, DictService.class);
-//        startService(intent);
-//        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
-
         if (mBoundService != null) {
-            results = mBoundService.getResults();
-            updateListView(results);
+            String searchKey = mBoundService.getSearchKey();
+            searchResults(searchKey);
         }
-
     }
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
