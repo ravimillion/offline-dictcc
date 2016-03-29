@@ -22,6 +22,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.HashMap;
 import java.util.TreeMap;
+import java.util.UUID;
 
 public class DictService extends Service implements ClipboardManager.OnPrimaryClipChangedListener {
     public String TAG = DictService.class.toString();
@@ -33,6 +34,7 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     private IBinder mBinder = new LocalBinder();
     private Activity context = null;
     private TreeMap<String, String> results = null;
+    private String dictDir = null;
 
     public DictService() {
     }
@@ -45,8 +47,8 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
 
     public void onCreate() {
         Toast.makeText(getApplicationContext(), "OfflineDict Started", Toast.LENGTH_SHORT).show();
-        dictPath = Environment.getExternalStorageDirectory() + File.separator + "Dictionary" + File.separator + "dict.txt";
-        dictionary = new Dictionary(dictPath);
+        dictPath = Environment.getExternalStorageDirectory() + File.separator + "Dictionary" + File.separator;
+        dictionary = new Dictionary(dictPath, dictDir);
         clipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(this);
     }
@@ -64,8 +66,6 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
 
     public TreeMap<String, String> getResults() {
         Log.d(TAG, "Results returned");
-//        this.results = searchAndGetResults(this.searchKey);
-//
         if (this.results !=  null && this.results.keySet().size() == 0) {
             Log.d(TAG, "Nothing found");
             Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();
@@ -80,13 +80,23 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     }
 
     public TreeMap<String, String> searchAndGetResults(String searchKey) {
+        File file = new File(dictPath + this.dictDir);
+        if (file.exists() == false) {
+            this.results = new TreeMap<>();
+            this.results.put(UUID.randomUUID() + this.dictDir, "Not found");
+            return this.results;
+        }
+        if (searchKey == null) return null;
         this.lastSearchKey = searchKey;
         this.results = dictionary.getTranslation(searchKey);
         return this.results;
 
     }
 
-
+    public void setDirection(String dir) {
+        this.dictDir = dir;
+        dictionary.setDirection(dir);
+    }
     public void onPrimaryClipChanged() {
         ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
         CharSequence copiedText = item.getText();
@@ -95,17 +105,6 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
 
         Log.d(TAG, "Copied Text: " + copiedText);
         this.searchKey = copiedText.toString();
-
-//        this.results = searchAndGetResults(copiedText.toString());
-//
-//        if (results.keySet().size() == 0) {
-//            Log.d(TAG, "Nothing found");
-//            Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();
-//            return;
-//        } else {
-//            Log.d(TAG, "Total results: " + results.size());
-//        }
-
         activateActivity();
     }
 

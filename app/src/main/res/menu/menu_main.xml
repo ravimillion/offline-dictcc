@@ -2,9 +2,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.raviz.offlinedictcc.MainActivity">
+
+    <item
+        android:id="@+id/de_en"
+        android:orderInCategory="100"
+        android:title="@string/de_en"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/en_de"
+        android:orderInCategory="101"
+        android:title="@string/en_de"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/en_es"
+        android:orderInCategory="101"
+        android:title="@string/en_es"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/es_de"
+        android:orderInCategory="101"
+        android:title="@string/es_de"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/de_es"
+        android:orderInCategory="101"
+        android:title="@string/de_es"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="102"
         android:title="@string/action_settings"
         app:showAsAction="never" />
 </menu>

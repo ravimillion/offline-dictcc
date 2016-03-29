@@ -18,15 +18,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeMap;
@@ -38,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText editText = null;
     private DictService mBoundService;
     private TreeMap<String, String> results = null;
+    private Menu mainMenu = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,10 +114,9 @@ public class MainActivity extends AppCompatActivity {
         String searchKey = mBoundService.getSearchKey();
 
         listView = (ListView) findViewById(R.id.listView);
-        editText = (EditText) findViewById(R.id.editText);
         button = (Button) findViewById(R.id.button);
-
-        editText.setText(searchKey);
+//
+//        editText.setText(searchKey);
         if (results != null) {
             Set<String> keySet = results.keySet();
 
@@ -160,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             DictService.LocalBinder myBinder = (DictService.LocalBinder) service;
             mBoundService = myBinder.getService();
+            mBoundService.setDirection("de-en.txt");
         }
     };
 
@@ -189,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-
+        this.mainMenu = menu;
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -205,7 +200,25 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
+        if (id == R.id.de_en) {
+            mBoundService.setDirection("de-en.txt");
+        }
+        if (id == R.id.en_de) {
+            mBoundService.setDirection("en-de.txt");
+        }
+        if (id == R.id.es_de) {
+            mBoundService.setDirection("es-de.txt");
+        }
+        if (id == R.id.de_es) {
+            mBoundService.setDirection("de-es.txt");
+        }
+        if (id == R.id.en_es) {
+            mBoundService.setDirection("en-es.txt");
+        }
+        for (int i = 0; i < this.mainMenu.size(); i++) {
+            this.mainMenu.getItem(i).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        }
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onOptionsItemSelected(item);
     }
 

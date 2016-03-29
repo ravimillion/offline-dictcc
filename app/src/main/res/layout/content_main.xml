@@ -12,7 +12,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.raviz.offlinedictcc.MainActivity"
     android:weightSum="1">
-    <!--tools:showIn="@layout/activity_main">-->
+    tools:showIn="@layout/activity_main">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -24,13 +24,14 @@
         <LinearLayout android:focusable="true"
             android:focusableInTouchMode="true" android:layout_width="0px"
             android:layout_height="0px" />
+
         <EditText
             android:layout_width="221dp"
             android:layout_height="fill_parent"
             android:id="@+id/editText"
             android:layout_above="@+id/listView"
             android:layout_centerHorizontal="true"
-            android:layout_weight="1.06"
+            android:layout_weight="1.04"
             android:padding="5dp" />
 
         <Button
@@ -39,13 +40,6 @@
             android:text="Search"
             android:id="@+id/button" />
     </LinearLayout>
-
-    <!--<ProgressBar-->
-        <!--android:id="@+id/progressBar1"-->
-        <!--style="?android:attr/progressBarStyleLarge"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_centerHorizontal="true" />-->
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Offline DictCC</string>
+
     <string name="action_settings">Settings</string>
+    <string name="en_de">En -> De</string>
+    <string name="de_en">De -> En</string>
+    <string name="es_de">Es -> De</string>
+    <string name="de_es">De -> Es</string>
+    <string name="en_es">En - > Es</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_notification_view">NotificationView</string>
 </resources>

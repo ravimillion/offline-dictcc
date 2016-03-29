@@ -20,29 +20,34 @@ import java.util.UUID;
 
 public class Dictionary {
     String TAG = "Dictionary";
-    public String dictPath = null;
-    public int TYPE_LENGTH = 6; // {m} {f} or {pl}
+    private String dictPath = null;
+    private String dictDir = "de-en.txt";
 
-    public Dictionary(String dictPath) {
+    public Dictionary(String dictPath, String dictDir) {
         this.dictPath = dictPath;
+        this.dictDir = dictDir;
     }
 
     public File getDictSourceFile() {
-        File file = new File(dictPath);
+        File file = new File(dictPath + dictDir);
         if (!file.exists()) {
-            Log.d(TAG, "File not found : " + dictPath);
+            Log.d(TAG, "File not found : " + file.getAbsolutePath());
             return null;
         }
 
         return file;
     }
 
+    public void setDirection(String dictDir) {
+        this.dictDir = dictDir;
+    }
     private TreeMap<String, String> getResults(String searchKey, File file) {
         TreeMap<String, String> results = new TreeMap<>();
         String line = null;
 
         try {
-            String command = "grep " + searchKey + " " + dictPath;
+            Log.d(TAG, "Grepping " + file.getAbsolutePath());
+            String command = "grep " + searchKey + " " + file.getAbsolutePath();
             Process process = Runtime.getRuntime().exec(command);
             BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
