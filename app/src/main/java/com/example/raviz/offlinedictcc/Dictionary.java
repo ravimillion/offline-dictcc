@@ -72,7 +72,6 @@ public class Dictionary {
         searchKey = searchKey.replaceAll("oe", "ö");
         searchKey = searchKey.replaceAll("OE", "Ö");
 
-        System.out.println("New search key: " + searchKey);
         return searchKey;
     }
 

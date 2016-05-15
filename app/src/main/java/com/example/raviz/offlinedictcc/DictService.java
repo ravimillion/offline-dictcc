@@ -38,6 +38,7 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     private Activity context = null;
     private TreeMap<String, String> results = null;
     private String dictDir = null;
+    private int MAX_SRC = 10;
 
     public DictService() {
     }
@@ -83,24 +84,16 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     }
 
     public TreeMap<String, String> searchAndGetResults(String searchKey) {
-//        File file = new File(dictPath + this.dictDir);
-//        if (file.exists() == false) {
-//            this.results = new TreeMap<>();
-//            this.results.put(UUID.randomUUID() + this.dictDir, "Not found");
-//            return this.results;
-//        }
         if (searchKey == null) return null;
         this.lastSearchKey = searchKey;
-
-        ArrayList<String> dictFiles = DictFileMapping.FileMapping.get(this.dictDir); // de-en
         TreeMap<String, String> rawResults = new TreeMap<>();
         TreeMap<String, String> tempResults = null;
-        for (String filePath: dictFiles) {
-            tempResults= dictionary.getTranslation(searchKey, dictPath + filePath);
-            if (tempResults == null) continue;
+        for (int i = 0; i < MAX_SRC; i++) {
+            String filePath = dictPath + this.dictDir + i + ".txt";
+            if (Utils.ifExists(filePath) == false) continue;
+            tempResults= dictionary.getTranslation(searchKey, filePath);
             Set<String> keys = tempResults.keySet();
             for (String k: keys) {
-                Log.d(TAG, "key: " + k);
                 rawResults.put(k, tempResults.get(k));
             }
         }
@@ -150,7 +143,6 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "Dict Path: " + dictPath);
-        DictFileMapping.MapInit();
         Log.d(TAG, "Service bound");
         return mBinder;
     }
