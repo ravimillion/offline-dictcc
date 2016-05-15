@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             DictService.LocalBinder myBinder = (DictService.LocalBinder) service;
             mBoundService = myBinder.getService();
-            mBoundService.setDirection("de-en.txt");
+            mBoundService.setDirection("de-en");
         }
     };
 
@@ -201,19 +201,19 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.de_en) {
-            mBoundService.setDirection("de-en.txt");
+            mBoundService.setDirection("de-en");
         }
         if (id == R.id.en_de) {
-            mBoundService.setDirection("en-de.txt");
+            mBoundService.setDirection("en-de");
         }
         if (id == R.id.es_de) {
-            mBoundService.setDirection("es-de.txt");
+            mBoundService.setDirection("es-de");
         }
         if (id == R.id.de_es) {
-            mBoundService.setDirection("de-es.txt");
+            mBoundService.setDirection("de-es");
         }
         if (id == R.id.en_es) {
-            mBoundService.setDirection("en-es.txt");
+            mBoundService.setDirection("en-es");
         }
         for (int i = 0; i < this.mainMenu.size(); i++) {
             this.mainMenu.getItem(i).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);

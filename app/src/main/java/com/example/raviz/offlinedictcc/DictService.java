@@ -20,7 +20,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -48,7 +51,7 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     public void onCreate() {
         Toast.makeText(getApplicationContext(), "OfflineDict Started", Toast.LENGTH_SHORT).show();
         dictPath = Environment.getExternalStorageDirectory() + File.separator + "Dictionary" + File.separator;
-        dictionary = new Dictionary(dictPath, dictDir);
+        dictionary = new Dictionary();
         clipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(this);
     }
@@ -63,39 +66,75 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-
-    public TreeMap<String, String> getResults() {
-        Log.d(TAG, "Results returned");
-        if (this.results !=  null && this.results.keySet().size() == 0) {
-            Log.d(TAG, "Nothing found");
-            Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();
-            return null;
-        } else {
-            Log.d(TAG, "Total results: " + results.size());
-        }
-        return this.results;
-    }
+//
+//    public TreeMap<String, String> getResults() {
+//        Log.d(TAG, "Results returned");
+//        if (this.results !=  null && this.results.keySet().size() == 0) {
+//            Log.d(TAG, "Nothing found");
+//            Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();
+//            return null;
+//        } else {
+//            Log.d(TAG, "Total results: " + results.size());
+//        }
+//        return this.results;
+//    }
     public String getSearchKey() {
         return this.searchKey;
     }
 
     public TreeMap<String, String> searchAndGetResults(String searchKey) {
-        File file = new File(dictPath + this.dictDir);
-        if (file.exists() == false) {
-            this.results = new TreeMap<>();
-            this.results.put(UUID.randomUUID() + this.dictDir, "Not found");
-            return this.results;
-        }
+//        File file = new File(dictPath + this.dictDir);
+//        if (file.exists() == false) {
+//            this.results = new TreeMap<>();
+//            this.results.put(UUID.randomUUID() + this.dictDir, "Not found");
+//            return this.results;
+//        }
         if (searchKey == null) return null;
         this.lastSearchKey = searchKey;
-        this.results = dictionary.getTranslation(searchKey);
-        return this.results;
 
+        ArrayList<String> dictFiles = DictFileMapping.FileMapping.get(this.dictDir); // de-en
+        TreeMap<String, String> rawResults = new TreeMap<>();
+        TreeMap<String, String> tempResults = null;
+        for (String filePath: dictFiles) {
+            tempResults= dictionary.getTranslation(searchKey, dictPath + filePath);
+            if (tempResults == null) continue;
+            Set<String> keys = tempResults.keySet();
+            for (String k: keys) {
+                Log.d(TAG, "key: " + k);
+                rawResults.put(k, tempResults.get(k));
+            }
+        }
+        if (rawResults != null) {
+            this.results = sortResultsByKeyLength(rawResults);
+        }
+
+        return this.results;
+    }
+
+    public TreeMap<String, String> sortResultsByKeyLength(TreeMap<String, String> results) {
+        TreeMap<String, String> sortedResults = new TreeMap<String, String>(
+                new Comparator<String>() {
+                    @Override
+                    public int compare(String s1, String s2) {
+                        if (s1.length() > s2.length()) {
+                            return 1;
+                        } else if (s1.length() < s2.length()) {
+                            return -1;
+                        } else {
+                            return s1.compareTo(s2);
+                        }
+                    }
+                });
+        Set<String> keys = results.keySet();
+        for (String k : keys) {
+            sortedResults.put(k, results.get(k));
+        }
+        return sortedResults;
     }
 
     public void setDirection(String dir) {
         this.dictDir = dir;
-        dictionary.setDirection(dir);
+//        dictionary.setDirection(dir);
     }
     public void onPrimaryClipChanged() {
         ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
@@ -110,6 +149,8 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG, "Dict Path: " + dictPath);
+        DictFileMapping.MapInit();
         Log.d(TAG, "Service bound");
         return mBinder;
     }

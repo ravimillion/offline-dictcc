@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/OfflineDictCC.iml" filepath="$PROJECT_DIR$/OfflineDictCC.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/offline-dictcc.iml" filepath="$PROJECT_DIR$/offline-dictcc.iml" />
     </modules>
   </component>
 </project>
