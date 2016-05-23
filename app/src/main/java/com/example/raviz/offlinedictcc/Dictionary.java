@@ -1,22 +1,12 @@
 package com.example.raviz.offlinedictcc;
 
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.UUID;
+import android.util.Log;
+import java.util.TreeMap;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Dictionary {
     String TAG = "Dictionary";
@@ -38,22 +28,24 @@ public class Dictionary {
     private TreeMap<String, String> getResults(String searchKey, File file) {
         TreeMap<String, String> results = new TreeMap<>();
         String line = null;
-
+        String l = null;
+        String k = null;
+        String v = null;
         try {
-            String command = "grep " + searchKey + " " + file.getAbsolutePath();
+            String command = "grep -ihF " + searchKey + " " + file.getAbsolutePath(); // -h without filename
+            Log.d(TAG, "Command: " + command);
             Process process = Runtime.getRuntime().exec(command);
             BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
             while ((line = br.readLine()) != null) {
-                String l = line.toString();
+                l = line.toString();
                 int tabIndex = l.indexOf('\t');
 
-                if (tabIndex > 0) {
-                    String k = l.substring(0, tabIndex);
-                    String v = l.substring(tabIndex + 1);
+                if (tabIndex > 0 && l.substring(0, tabIndex).toLowerCase().contains(searchKey)) {
+                    k = l.substring(0, tabIndex);
+                    v = l.substring(tabIndex + 1);
                     results.put(UUID.randomUUID().toString() + k, v);
                 } else {
-                  Log.d(TAG, " Error: Tab index seperator not found");
+                    Log.d(TAG, l.substring(0, tabIndex));
                 }
             }
         } catch (IOException e) {

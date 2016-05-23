@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EditText editText = (EditText) findViewById(R.id.editText);
                 String searchKey = editText.getText().toString();
-                if (searchKey.length() > 3) {
+                if (searchKey.length() > 1) {
                     Snackbar.make(listView, "Searching...", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     searchResults(searchKey);

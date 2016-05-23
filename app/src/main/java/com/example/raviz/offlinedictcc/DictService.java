@@ -43,11 +43,11 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     public DictService() {
     }
 
-    public void setContext(Activity ctx) {
-        Log.d(TAG, "Setting context " + ctx.toString());
-        this.context = ctx;
-
-    }
+//    public void setContext(Activity ctx) {
+//        Log.d(TAG, "Setting context " + ctx.toString());
+//        this.context = ctx;
+//
+//    }
 
     public void onCreate() {
         Toast.makeText(getApplicationContext(), "OfflineDict Started", Toast.LENGTH_SHORT).show();
@@ -67,18 +67,7 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-//
-//    public TreeMap<String, String> getResults() {
-//        Log.d(TAG, "Results returned");
-//        if (this.results !=  null && this.results.keySet().size() == 0) {
-//            Log.d(TAG, "Nothing found");
-//            Toast.makeText(getApplicationContext(),"Nothing found", Toast.LENGTH_SHORT).show();
-//            return null;
-//        } else {
-//            Log.d(TAG, "Total results: " + results.size());
-//        }
-//        return this.results;
-//    }
+
     public String getSearchKey() {
         return this.searchKey;
     }
@@ -135,7 +124,6 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
 
         if (lastSearchKey.equals(copiedText) || copiedText == null) return;
 
-        Log.d(TAG, "Copied Text: " + copiedText);
         this.searchKey = copiedText.toString();
         activateActivity();
     }
