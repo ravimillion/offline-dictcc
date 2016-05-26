@@ -11,10 +11,6 @@ import java.io.InputStreamReader;
 public class Dictionary {
     String TAG = "Dictionary";
 
-    public Dictionary() {
-    }
-
-
     public File getDictSourceFile(String dictPath) {
         File file = new File(dictPath);
         if (!file.exists()) {
