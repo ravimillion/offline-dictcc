@@ -43,12 +43,6 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
     public DictService() {
     }
 
-//    public void setContext(Activity ctx) {
-//        Log.d(TAG, "Setting context " + ctx.toString());
-//        this.context = ctx;
-//
-//    }
-
     public void onCreate() {
         Toast.makeText(getApplicationContext(), "OfflineDict Started", Toast.LENGTH_SHORT).show();
         dictPath = Environment.getExternalStorageDirectory() + File.separator + "Dictionary" + File.separator;

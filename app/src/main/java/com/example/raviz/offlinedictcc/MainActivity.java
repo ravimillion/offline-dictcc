@@ -62,14 +62,15 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.INVISIBLE);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
 
         setupToolbar();
     }
@@ -195,7 +196,8 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.INVISIBLE);
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -214,6 +216,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (id == R.id.en_es) {
             mBoundService.setDirection("en-es");
+        }
+        if (id == R.id.action_flashcard) {
+            fab.setVisibility(View.VISIBLE);
         }
         for (int i = 0; i < this.mainMenu.size(); i++) {
             this.mainMenu.getItem(i).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);

@@ -13,11 +13,6 @@ import java.util.TreeMap;
 public class OfflineDictTest extends TestCase {
     @Test
     public void testSearch() {
-        Dictionary dictionary = new Dictionary("/home/raviz/Documents/test.txt");
-        TreeMap<String, String> results = dictionary.getTranslation("Einfuehrung");
-        Set<String> keys = results.keySet();
-        for(String k: keys) {
-//            System.out.println(k.toString().substring(36) + " -- " + results.get(k.toString()));
-        }
+
     }
 }

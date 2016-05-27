@@ -41,7 +41,7 @@ public class Dictionary {
                     v = l.substring(tabIndex + 1);
                     results.put(UUID.randomUUID().toString() + k, v);
                 } else {
-                    Log.d(TAG, l.substring(0, tabIndex));
+                    Log.d(TAG, l);
                 }
             }
         } catch (IOException e) {
