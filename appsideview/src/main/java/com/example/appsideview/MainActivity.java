@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         public void onServiceConnected(ComponentName name, IBinder service) {
             DictionaryService.LocalBinder myBinder = (DictionaryService.LocalBinder) service;
             mBoundService = myBinder.getService();
-            mBoundService.setDirection("de-en");
+            mBoundService.setLanguage("de-en");
             Log.d(TAG, "Service bound");
         }
     };
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
                 if (mBoundService != null) {
                     try {
-                        results = mBoundService.searchAndGetResults(searchKey);
+                        results = mBoundService.getResults(searchKey);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                         Snackbar.make(listView, "No source file", Snackbar.LENGTH_LONG)
@@ -186,7 +185,6 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
             this.moveTaskToBack(true);
         }
     }
@@ -221,19 +219,19 @@ public class MainActivity extends AppCompatActivity
 //            return true;
 //        }
 //        if (id == R.id.de_en) {
-//            mBoundService.setDirection("de-en");
+//            mBoundService.setLanguage("de-en");
 //        }
 //        if (id == R.id.en_de) {
-//            mBoundService.setDirection("en-de");
+//            mBoundService.setLanguage("en-de");
 //        }
 //        if (id == R.id.es_de) {
-//            mBoundService.setDirection("es-de");
+//            mBoundService.setLanguage("es-de");
 //        }
 //        if (id == R.id.de_es) {
-//            mBoundService.setDirection("de-es");
+//            mBoundService.setLanguage("de-es");
 //        }
 //        if (id == R.id.en_es) {
-//            mBoundService.setDirection("en-es");
+//            mBoundService.setLanguage("en-es");
 //        }
 ////        if (id == R.id.action_flashcard) {
 ////            fab.setVisibility(View.VISIBLE);
@@ -252,19 +250,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.de_en) {
-            mBoundService.setDirection("de-en");
+            mBoundService.setLanguage("de-en");
         }
         if (id == R.id.en_de) {
-            mBoundService.setDirection("en-de");
+            mBoundService.setLanguage("en-de");
         }
         if (id == R.id.es_de) {
-            mBoundService.setDirection("es-de");
+            mBoundService.setLanguage("es-de");
         }
         if (id == R.id.de_es) {
-            mBoundService.setDirection("de-es");
+            mBoundService.setLanguage("de-es");
         }
         if (id == R.id.en_es) {
-            mBoundService.setDirection("en-es");
+            mBoundService.setLanguage("en-es");
         }
         if (id == R.id.flashcards) {
             Intent myIntent = new Intent(MainActivity.this, FlashCard.class);

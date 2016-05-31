@@ -22,16 +22,12 @@ public class DictionaryService extends Service implements ClipboardManager.OnPri
     public String TAG = DictionaryService.class.toString();
     public String lastSearchKey = new String("dummy");
     public String searchKey = null;
-    public String dictPath = null;
     public Dictionary dictionary = null;
     public ClipboardManager clipBoard = null;
     private IBinder mBinder = new LocalBinder();
-    private String dictDir = null;
-    private int MAX_SRC = 10;
 
     public void onCreate() {
         Toast.makeText(getApplicationContext(), "OfflineDict Started", Toast.LENGTH_SHORT).show();
-        dictPath = Environment.getExternalStorageDirectory() + File.separator + "Dictionary" + File.separator;
         dictionary = new Dictionary();
         clipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         clipBoard.addPrimaryClipChangedListener(this);
@@ -52,57 +48,15 @@ public class DictionaryService extends Service implements ClipboardManager.OnPri
         return this.searchKey;
     }
 
-    public TreeMap<String, String> searchAndGetResults(String searchKey) throws FileNotFoundException {
-        this.lastSearchKey = searchKey;
-        TreeMap<String, String> rawResults = new TreeMap<>();
-        TreeMap<String, String> tempResults = null;
-        ArrayList<File> dictFiles = new ArrayList<>();
-        for (int i = 1; i < MAX_SRC; i++) {
-            String filePath = dictPath + this.dictDir + i + ".txt";
-            try {
-                dictFiles.add(Utils.getDictSourceFile(filePath));
-            } catch(FileNotFoundException fe) {
-                Log.d(TAG, "File not found: " + filePath);
-                continue;
-            }
-        }
-
-        if (dictFiles.size() == 0) throw new FileNotFoundException();
-
-        for (int i = 0; i < dictFiles.size(); i++) {
-            tempResults= dictionary.getTranslation(searchKey, dictFiles.get(i));
-            Set<String> keys = tempResults.keySet();
-            for (String k: keys) {
-                rawResults.put(k, tempResults.get(k));
-            }
-        }
-
-        return sortResultsByKeyLength(rawResults);
-    }
-
-    public TreeMap<String, String> sortResultsByKeyLength(TreeMap<String, String> results) {
-        TreeMap<String, String> sortedResults = new TreeMap<String, String>(
-                new Comparator<String>() {
-                    @Override
-                    public int compare(String s1, String s2) {
-                        if (s1.length() > s2.length()) {
-                            return 1;
-                        } else if (s1.length() < s2.length()) {
-                            return -1;
-                        } else {
-                            return s1.compareTo(s2);
-                        }
-                    }
-                });
-        Set<String> keys = results.keySet();
-        for (String k : keys) {
-            sortedResults.put(k, results.get(k));
-        }
+    public TreeMap<String, String> getResults(String searchKey) throws FileNotFoundException {
+        TreeMap<String, String> sortedResults = dictionary.getSearchResults(searchKey);
         return sortedResults;
     }
 
-    public void setDirection(String dir) {
-        this.dictDir = dir;
+
+
+    public void setLanguage(String dir) {
+        this.dictionary.setLanguage(dir);
     }
     public void onPrimaryClipChanged() {
         ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
@@ -116,7 +70,6 @@ public class DictionaryService extends Service implements ClipboardManager.OnPri
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "Dict Path: " + dictPath);
         Log.d(TAG, "Service bound");
         return mBinder;
     }
