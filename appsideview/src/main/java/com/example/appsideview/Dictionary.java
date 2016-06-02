@@ -103,7 +103,7 @@ public class Dictionary {
         TreeMap<String, String> rawResults;
         ArrayList<File> dictFiles = new ArrayList<>();
 
-        for (int i = 2; i < MAX_DICTIONARY; i++) {
+        for (int i = 1; i < MAX_DICTIONARY; i++) {
             String filePath = dictPath + this.language + i + ".txt";
             try {
                 dictFiles.add(Utils.getDictSourceFile(filePath));
@@ -114,7 +114,7 @@ public class Dictionary {
         }
         Log.d(TAG, "Total searchable files: " + dictFiles.size());
 
-        if (dictFiles.size() > 0) throw new FileNotFoundException();
+        if (dictFiles.size() == 0) throw new FileNotFoundException();
 
         rawResults = searchDictionaryFiles(searchKey, dictFiles);
         return sortResultsByKeyLength(rawResults);

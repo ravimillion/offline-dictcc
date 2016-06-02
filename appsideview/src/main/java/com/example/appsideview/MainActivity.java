@@ -22,6 +22,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.appsideview.db.DBCore;
+import com.example.appsideview.db.DBManager;
+
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Set;
@@ -82,6 +85,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        initDataBase();
+    }
+
+    public void initDataBase() {
+//        getApplicationContext().deleteDatabase(DBCore.DB_NAME);
+        DBManager dbManager = DBManager.getDBManager();
+        dbManager.setParams(getApplicationContext());
     }
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -130,6 +140,9 @@ public class MainActivity extends AppCompatActivity
                 if (mBoundService != null) {
                     try {
                         results = mBoundService.getResults(searchKey);
+                        if (results.size() > 0) {
+                            DBManager.getDBManager().saveInHistory(searchKey);
+                        }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                         Snackbar.make(listView, "No source file", Snackbar.LENGTH_LONG)
@@ -165,8 +178,14 @@ public class MainActivity extends AppCompatActivity
 
             DictEntryAdapter dictEntryAdapter = new DictEntryAdapter(this, keysArray, valuesArray);
             listView.setAdapter(dictEntryAdapter);
-            Snackbar.make(listView, "Found " + results.size() + " entries", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            if (results.size() > 0) {
+                Snackbar.make(listView, "Found " + results.size() + " entries", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            } else {
+                Snackbar.make(listView, "Nothing found ", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+
         } else {
 //            Snackbar.make(listView, "No source file", Snackbar.LENGTH_LONG)
 //                    .setAction("Action", null).show();
