@@ -1,4 +1,4 @@
-package com.example.appsideview;
+package com.example.appsideview.main;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,8 +22,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.appsideview.db.DBCore;
+import com.example.appsideview.flashcard.FlashCardActivity;
+import com.example.appsideview.R;
 import com.example.appsideview.db.DBManager;
+import com.example.appsideview.dictionary.DictEntryAdapter;
+import com.example.appsideview.dictionary.DictionaryService;
 
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -116,15 +119,6 @@ public class MainActivity extends AppCompatActivity
         unbindService(mServiceConnection);
         stopService(new Intent(this, DictionaryService.class));
         Log.d(TAG, "destroyed");
-    }
-
-    private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        // Show menu icon
-        final ActionBar ab = getSupportActionBar();
-//        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-//        ab.setDisplayHomeAsUpEnabled(true);
     }
 
     private void searchResults(String sk) {
@@ -284,7 +278,7 @@ public class MainActivity extends AppCompatActivity
             mBoundService.setLanguage("en-es");
         }
         if (id == R.id.flashcards) {
-            Intent myIntent = new Intent(MainActivity.this, FlashCard.class);
+            Intent myIntent = new Intent(MainActivity.this, FlashCardActivity.class);
 //            myIntent.putExtra("key", value); //Optional parameters
             MainActivity.this.startActivity(myIntent);
         }

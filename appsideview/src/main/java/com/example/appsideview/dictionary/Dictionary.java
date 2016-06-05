@@ -1,4 +1,4 @@
-package com.example.appsideview;
+package com.example.appsideview.dictionary;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,6 +9,9 @@ import java.util.UUID;
 
 import android.os.Environment;
 import android.util.Log;
+
+import com.example.appsideview.main.Utils;
+
 import java.util.TreeMap;
 import java.io.IOException;
 import java.io.BufferedReader;

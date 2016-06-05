@@ -1,4 +1,4 @@
-package com.example.appsideview;
+package com.example.appsideview.main;
 
 import java.io.File;
 import java.io.FileNotFoundException;

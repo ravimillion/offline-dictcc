@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".main.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
@@ -24,12 +24,12 @@
         </activity>
 
         <service
-            android:name=".DictionaryService"
+            android:name=".dictionary.DictionaryService"
             android:enabled="true"
             android:exported="true" />
 
         <activity
-            android:name=".FlashCard"
+            android:name=".flashcard.FlashCardActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_flash_card"
             android:theme="@style/FullscreenTheme"></activity>

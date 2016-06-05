@@ -50,9 +50,17 @@ public class DBCore extends SQLiteOpenHelper{
     public static abstract class Dictionary implements BaseColumns {
         public static final String TABLE_NAME = "dictionary";
         public static final String COLUMN_NAME_TITLE = "key";
+        public static final String COLUMN_NAME_REVISIONS = "revisions";
+        public static final String COLUMN_NAME_LANGUAGE = "lang";
+        public static final String COLUMN_NAME_INDEX = "lang";
 
-        private static final String CREATE_TABLE_HISTORY = "CREATE TABLE " + Dictionary.TABLE_NAME +
-                " (" + Dictionary._ID + " INTEGER PRIMARY KEY," + Dictionary.COLUMN_NAME_TITLE + TEXT_TYPE + " )";
+        private static final String CREATE_TABLE_HISTORY = "CREATE TABLE " +
+                Dictionary.TABLE_NAME + " (" +
+                Dictionary._ID + " INTEGER PRIMARY KEY," + Dictionary.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
+                Dictionary.COLUMN_NAME_REVISIONS + INTEGER_TYPE + COMMA_SEP +
+                Dictionary.COLUMN_NAME_LANGUAGE + TEXT_TYPE + COMMA_SEP +
+                Dictionary.COLUMN_NAME_INDEX + INTEGER_TYPE +
+                " )";
     }
 
 

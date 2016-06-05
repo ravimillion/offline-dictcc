@@ -1,21 +1,17 @@
-package com.example.appsideview;
+package com.example.appsideview.dictionary;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.File;
+import com.example.appsideview.main.MainActivity;
+
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Set;
 import java.util.TreeMap;
 
 public class DictionaryService extends Service implements ClipboardManager.OnPrimaryClipChangedListener {
@@ -80,7 +76,7 @@ public class DictionaryService extends Service implements ClipboardManager.OnPri
     }
 
     public class LocalBinder extends Binder {
-        DictionaryService getService() {
+        public DictionaryService getService() {
             return DictionaryService.this;
         }
     }
