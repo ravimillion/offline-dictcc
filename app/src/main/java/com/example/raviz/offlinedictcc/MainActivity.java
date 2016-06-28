@@ -1,15 +1,11 @@
 package com.example.raviz.offlinedictcc;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -59,18 +55,17 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(listView, "Word too short", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
-
             }
         });
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setVisibility(View.INVISIBLE);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setVisibility(View.INVISIBLE);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         setupToolbar();
     }
@@ -116,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.listView);
         button = (Button) findViewById(R.id.button);
-//
-//        editText.setText(searchKey);
+
         if (results != null) {
             Set<String> keySet = results.keySet();
 
@@ -196,8 +190,8 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setVisibility(View.INVISIBLE);
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setVisibility(View.INVISIBLE);
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -217,9 +211,9 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.en_es) {
             mBoundService.setDirection("en-es");
         }
-        if (id == R.id.action_flashcard) {
-            fab.setVisibility(View.VISIBLE);
-        }
+//        if (id == R.id.action_flashcard) {
+//            fab.setVisibility(View.VISIBLE);
+//        }
         for (int i = 0; i < this.mainMenu.size(); i++) {
             this.mainMenu.getItem(i).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         }

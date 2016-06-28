@@ -18,7 +18,6 @@ public class DBCore extends SQLiteOpenHelper{
     private String TAG = "DBManager";
     public static String DB_NAME = "offline-dict.db";
     public static int DB_VERSION = 1;
-    private SQLiteOpenHelper dbHelper = null;
     private DBCore dbManager = null;
     public DBCore(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -42,23 +41,27 @@ public class DBCore extends SQLiteOpenHelper{
 
     }
 
+    // data type definition
     private static final String TEXT_TYPE = " TEXT";
     private static final String LONG_TYPE = " LONG";
     private static final String INTEGER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
 
+    // COLUMN definition
     public static abstract class Dictionary implements BaseColumns {
         public static final String TABLE_NAME = "dictionary";
-        public static final String COLUMN_NAME_TITLE = "key";
+        public static final String COLUMN_NAME_KEY = "key";
         public static final String COLUMN_NAME_REVISIONS = "revisions";
-        public static final String COLUMN_NAME_LANGUAGE = "lang";
-        public static final String COLUMN_NAME_INDEX = "lang";
+        public static final String COLUMN_NAME_LANGUAGE_FROM = "lang_from";
+        public static final String COLUMN_NAME_LANGUAGE_TO = "lang_to";
+        public static final String COLUMN_NAME_INDEX = "idx";
 
         private static final String CREATE_TABLE_HISTORY = "CREATE TABLE " +
                 Dictionary.TABLE_NAME + " (" +
-                Dictionary._ID + " INTEGER PRIMARY KEY," + Dictionary.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
+                Dictionary._ID + " INTEGER PRIMARY KEY," + Dictionary.COLUMN_NAME_KEY + TEXT_TYPE + COMMA_SEP +
                 Dictionary.COLUMN_NAME_REVISIONS + INTEGER_TYPE + COMMA_SEP +
-                Dictionary.COLUMN_NAME_LANGUAGE + TEXT_TYPE + COMMA_SEP +
+                Dictionary.COLUMN_NAME_LANGUAGE_FROM + TEXT_TYPE + COMMA_SEP +
+                Dictionary.COLUMN_NAME_LANGUAGE_TO + TEXT_TYPE + COMMA_SEP +
                 Dictionary.COLUMN_NAME_INDEX + INTEGER_TYPE +
                 " )";
     }

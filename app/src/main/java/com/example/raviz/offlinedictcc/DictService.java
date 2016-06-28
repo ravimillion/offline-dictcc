@@ -1,18 +1,10 @@
 package com.example.raviz.offlinedictcc;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
@@ -20,12 +12,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.UUID;
 
 public class DictService extends Service implements ClipboardManager.OnPrimaryClipChangedListener {
     public String TAG = DictService.class.toString();
@@ -82,6 +71,7 @@ public class DictService extends Service implements ClipboardManager.OnPrimaryCl
         }
         if (rawResults != null) {
             this.results = sortResultsByKeyLength(rawResults);
+            Log.d(TAG, "Null result set");
         }
 
         return this.results;

@@ -1,26 +1,15 @@
 package com.example.appsideview.db;
 
-/**
- * Created by ravi on 31.05.16.
- */
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import java.util.ArrayList;
 
-/**
- * Created by ravi on 20.09.15.
- */
 public class DBManager {
-
-
     private Context context = null;
     private String TAG = "DBManager";
     private static DBManager dbManager = new DBManager();
-
     private SQLiteDatabase wDB = null;
     private SQLiteDatabase rDB = null;
 
@@ -38,11 +27,85 @@ public class DBManager {
         return dbManager;
     }
 
-    public void saveInHistory(String word) {
+//    public static final String TABLE_NAME = "dictionary";
+//    public static final String COLUMN_NAME_KEY = "key";
+//    public static final String COLUMN_NAME_REVISIONS = "revisions";
+//    public static final String COLUMN_NAME_LANGUAGE_FROM = "lang_from";
+//    public static final String COLUMN_NAME_LANGUAGE_TO = "lang_to";
+//    public static final String COLUMN_NAME_INDEX = "index";
+
+    public void printTable() {
+        Cursor cursor = rDB.query(DBCore.Dictionary.TABLE_NAME, null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Log.d(TAG, cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_KEY)) + " | " +
+                        cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_LANGUAGE_FROM)) + " | " +
+                        cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_LANGUAGE_TO)));
+            } while (cursor.moveToNext());
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+    }
+
+    public void isDuplicate() {
+        Cursor cursor = rDB.query(DBCore.Dictionary.TABLE_NAME, null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Log.d(TAG, cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_KEY)) + " | " +
+                        cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_LANGUAGE_FROM)) + " | " +
+                        cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_LANGUAGE_TO)));
+            } while (cursor.moveToNext());
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+    }
+
+    public void saveInHistory(String word, String langFrom, String langTo) {
+        Cursor cursor = rDB.rawQuery("SELECT * FROM " + DBCore.Dictionary.TABLE_NAME + " WHERE " +
+                DBCore.Dictionary.COLUMN_NAME_KEY + " = \"" + word + "\" AND " +
+                DBCore.Dictionary.COLUMN_NAME_LANGUAGE_FROM + " = \"" + langFrom + "\" AND " +
+                DBCore.Dictionary.COLUMN_NAME_LANGUAGE_TO + " = \"" + langTo + "\"", null);
+
+        if (cursor.getCount() > 0) {
+            Log.d(TAG, "Duplicate entry: " + word);
+            printTable();
+            return;
+        }
+
         ContentValues values = new ContentValues();
-        values.put(DBCore.Dictionary.COLUMN_NAME_TITLE, word);
+        values.put(DBCore.Dictionary.COLUMN_NAME_KEY, word);
+        values.put(DBCore.Dictionary.COLUMN_NAME_REVISIONS, 0);
+        values.put(DBCore.Dictionary.COLUMN_NAME_LANGUAGE_FROM, langFrom);
+        values.put(DBCore.Dictionary.COLUMN_NAME_LANGUAGE_TO, langTo);
         wDB.insert(DBCore.Dictionary.TABLE_NAME, null, values);
     }
+
+//    public void addWord(Circle circle) {
+//        ContentValues values = new ContentValues();
+//        values.put(DBCore.Dancer.COLUMN_NAME_PROJECT_ID, circle.getProjectId());
+//        values.put(DBCore.Dancer.COLUMN_NAME_DANCER_ID, circle.getCid());
+//        values.put(DBCore.Dancer.COLUMN_NAME_COLOR, circle.getBasePaint().getColor());
+//        values.put(DBCore.Dancer.COLUMN_NAME_BASE_LOC_X, circle.getBaseCenterX());
+//        values.put(DBCore.Dancer.COLUMN_NAME_BASE_LOC_Y, circle.getBaseCenterY());
+//        values.put(DBCore.Dancer.COLUMN_NAME_DANCER_NAME, circle.getDancerName());
+//        values.put(DBCore.Dancer.COLUMN_NAME_RADIUS, circle.getRadius());
+//
+//        wDB.insert(DBCore.Dancer.TABLE_NAME, null, values);
+//    }
+
+    //    public void saveDancers(HashSet<Circle> dancers) {
+//        ContentValues values = new ContentValues();
+//        wDB.execSQL("DELETE FROM " + DBCore.Dancer.TABLE_NAME + " WHERE " +
+//                DBCore.Dancer.COLUMN_NAME_PROJECT_ID + " = \"" + CircleManager.CURRENT_PROJECT.getpId() + "\"");
+//
+//        for (Circle c : dancers) {
+//            Log.d(TAG, "Adding to db: " + c.toString());
+//            addCircle(c);
+//        }
+//    }
+
 
 //    public void updateProject(Project project) {
 //        String query = "UPDATE " + DBCore.Project.TABLE_NAME + " SET " + DBCore.Project.COLUMN_NAME_CIRCLE_COUNT + " = \"" + project.getCircleCount() + "\" WHERE " + DBCore.Project.COLUMN_NAME_TITLE + "=\"" + project.getpId() + "\"";
@@ -238,3 +301,4 @@ public class DBManager {
 //        wDB.insert(DBCore.Dancer.TABLE_NAME, null, values);
 //    }
 }
+

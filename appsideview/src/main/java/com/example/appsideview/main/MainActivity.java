@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.appsideview.db.DBCore;
 import com.example.appsideview.flashcard.FlashCardActivity;
 import com.example.appsideview.R;
 import com.example.appsideview.db.DBManager;
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity
                     try {
                         results = mBoundService.getResults(searchKey);
                         if (results.size() > 0) {
-                            DBManager.getDBManager().saveInHistory(searchKey);
+                            DBManager.getDBManager().saveInHistory(searchKey, "de", "en");
                         }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();

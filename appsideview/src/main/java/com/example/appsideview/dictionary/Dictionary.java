@@ -37,7 +37,8 @@ public class Dictionary {
     }
 
     private String prepareCommand(String searchKey, ArrayList<File> dictFiles) {
-        StringBuffer command = new StringBuffer("grep -ihF " + searchKey + " ");
+        StringBuffer command = new StringBuffer("grep " + searchKey + " ");
+//        StringBuffer command = new StringBuffer("grep -ihF " + searchKey + " ");
         for (int i = 0; i < dictFiles.size(); i++) {
             command.append(dictFiles.get(i).getAbsolutePath() + " "); // -h without filename
         }

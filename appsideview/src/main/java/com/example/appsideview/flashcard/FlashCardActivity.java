@@ -43,6 +43,7 @@ public class FlashCardActivity extends FragmentActivity {
     private ListView listView = null;
     private DictionaryService mBoundService = null;
     private TreeMap<String, String> results = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +75,7 @@ public class FlashCardActivity extends FragmentActivity {
 //                searchResults("mutter");
             }
             public void onSwipeRight() {
-                Log.d(TAG, "left");
+                Log.d(TAG, "right-next word");
 //                    String word = DBManager.getDBManager().getNextWord();
                 String word = "Mutter";
                 searchResults(word);
@@ -82,7 +83,7 @@ public class FlashCardActivity extends FragmentActivity {
                 textView.setText(word);
             }
             public void onSwipeLeft() {
-                String word = "NextWord " + ++WordCounter;
+                String word = "previous word " + ++WordCounter;
                 TextView textView = (TextView) findViewById(R.id.textView2);
                 textView.setText(word);
             }
@@ -110,6 +111,7 @@ public class FlashCardActivity extends FragmentActivity {
             Log.d(TAG, "Service bound");
         }
     };
+
     private void searchResults(String sk) {
         final String searchKey = sk;
         if (sk == null) return;
@@ -121,9 +123,9 @@ public class FlashCardActivity extends FragmentActivity {
                 if (mBoundService != null) {
                     try {
                         results = mBoundService.getResults(searchKey);
-                        if (results.size() > 0) {
-                            DBManager.getDBManager().saveInHistory(searchKey);
-                        }
+//                        if (results.size() > 0) {
+//                            DBManager.getDBManager().saveInHistory(searchKey);
+//                        }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                         Snackbar.make(listView, "No source file", Snackbar.LENGTH_LONG)
