@@ -74,27 +74,11 @@ public class FlashCardActivity extends FragmentActivity {
             }
 
             public void onSwipeRight() {
-                String word = DBManager.getDBManager().getNextWordSortedByRevision(mBoundService.getLanguageFrom(), mBoundService.getLanguageTo());
-                if (word == null) {
-                    textView.setText("No word found.");
-                    return;
-                }
-
-                searchResults(word);
-                TextView textView = (TextView) findViewById(R.id.textView2);
-                textView.setText(word);
+                handleLeftRightSwipe();
             }
 
             public void onSwipeLeft() {
-                String word = DBManager.getDBManager().getNextWordSortedByRevision(mBoundService.getLanguageFrom(), mBoundService.getLanguageTo());
-                if (word == null) {
-                    textView.setText("No word found.");
-                    return;
-                }
-
-                searchResults(word);
-                TextView textView = (TextView) findViewById(R.id.textView2);
-                textView.setText(word);
+                handleLeftRightSwipe();
             }
 
             public void onSwipeBottom() {
@@ -103,6 +87,17 @@ public class FlashCardActivity extends FragmentActivity {
         });
     }
 
+    private void handleLeftRightSwipe() {
+        String word = DBManager.getDBManager().getNextWordSortedByRevision(mBoundService.getLanguageFrom(), mBoundService.getLanguageTo());
+        if (word == null) {
+            textView.setText("No word found.");
+            return;
+        }
+
+        searchResults(word);
+        TextView textView = (TextView) findViewById(R.id.textView2);
+        textView.setText(word);
+    }
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(ComponentName name) {
