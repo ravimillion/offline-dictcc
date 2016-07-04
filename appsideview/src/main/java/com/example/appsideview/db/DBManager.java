@@ -27,20 +27,14 @@ public class DBManager {
         return dbManager;
     }
 
-//    public static final String TABLE_NAME = "dictionary";
-//    public static final String COLUMN_NAME_KEY = "key";
-//    public static final String COLUMN_NAME_REVISIONS = "revisions";
-//    public static final String COLUMN_NAME_LANGUAGE_FROM = "lang_from";
-//    public static final String COLUMN_NAME_LANGUAGE_TO = "lang_to";
-//    public static final String COLUMN_NAME_INDEX = "index";
-
     public void printTable() {
         Cursor cursor = rDB.query(DBCore.Dictionary.TABLE_NAME, null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 Log.d(TAG, cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_KEY)) + " | " +
                         cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_LANGUAGE_FROM)) + " | " +
-                        cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_LANGUAGE_TO)));
+                        cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_LANGUAGE_TO)) + " | " +
+                        cursor.getInt(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_REVISIONS)));
             } while (cursor.moveToNext());
         }
         if (cursor != null && !cursor.isClosed()) {
@@ -60,6 +54,32 @@ public class DBManager {
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
+    }
+
+    public String getNextWordSortedByRevision(String langFrom, String langTo) {
+        String word = null;
+        int revisionCount = 0;
+        Cursor cursor = rDB.rawQuery("SELECT * FROM " + DBCore.Dictionary.TABLE_NAME + " WHERE " +
+                DBCore.Dictionary.COLUMN_NAME_LANGUAGE_FROM + " = \"" + langFrom + "\" AND " +
+                DBCore.Dictionary.COLUMN_NAME_LANGUAGE_TO + " = \"" + langTo + "\"" + " ORDER BY " + DBCore.Dictionary.COLUMN_NAME_REVISIONS + " ASC", null);
+        if (cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                    word = cursor.getString(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_KEY));
+                    revisionCount = cursor.getInt(cursor.getColumnIndexOrThrow(DBCore.Dictionary.COLUMN_NAME_REVISIONS));
+                    Log.d(TAG, "Returning: " + word);
+            }
+
+            String query = "UPDATE " + DBCore.Dictionary.TABLE_NAME + " SET "
+                    + DBCore.Dictionary.COLUMN_NAME_REVISIONS + " = " + (revisionCount + 1) + " WHERE " + DBCore.Dictionary.COLUMN_NAME_KEY + " = \"" + word + "\"";
+            Log.d(TAG, query);
+            wDB.execSQL(query);
+
+            return word;
+        }
+
+        printTable();
+
+        return "No Word";
     }
 
     public void saveInHistory(String word, String langFrom, String langTo) {

@@ -37,8 +37,10 @@ public class Dictionary {
     }
 
     private String prepareCommand(String searchKey, ArrayList<File> dictFiles) {
-        StringBuffer command = new StringBuffer("grep " + searchKey + " ");
-//        StringBuffer command = new StringBuffer("grep -ihF " + searchKey + " ");
+        // for testing in vm
+//        StringBuffer command = new StringBuffer("grep " + searchKey + " ");
+//         for testing on device
+        StringBuffer command = new StringBuffer("grep -ihF " + searchKey + " ");
         for (int i = 0; i < dictFiles.size(); i++) {
             command.append(dictFiles.get(i).getAbsolutePath() + " "); // -h without filename
         }
@@ -66,7 +68,7 @@ public class Dictionary {
                     v = l.substring(tabIndex + 1);
                     results.put(UUID.randomUUID().toString() + k, v);
                 } else {
-                    Log.d(TAG, l);
+//                    Log.d(TAG, l);
                 }
             }
         } catch (IOException e) {
@@ -112,11 +114,11 @@ public class Dictionary {
             try {
                 dictFiles.add(Utils.getDictSourceFile(filePath));
             } catch(FileNotFoundException fe) {
-                Log.d(TAG, "File not found: " + filePath);
+//                Log.d(TAG, "File not found: " + filePath);
                 continue;
             }
         }
-        Log.d(TAG, "Total searchable files: " + dictFiles.size());
+//        Log.d(TAG, "Total searchable files: " + dictFiles.size());
 
         if (dictFiles.size() == 0) throw new FileNotFoundException();
 

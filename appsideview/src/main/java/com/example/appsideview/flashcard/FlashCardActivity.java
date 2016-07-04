@@ -39,8 +39,8 @@ import java.util.TreeMap;
  */
 public class FlashCardActivity extends FragmentActivity {
     private String TAG = "FlashCardActivity";
-    private int WordCounter = 1;
     private ListView listView = null;
+    private TextView textView = null;
     private DictionaryService mBoundService = null;
     private TreeMap<String, String> results = null;
 
@@ -54,10 +54,11 @@ public class FlashCardActivity extends FragmentActivity {
         startService(intent);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
-        findViewById(R.id.textView2).setVisibility(View.VISIBLE);
-        findViewById(R.id.listView2).setVisibility(View.INVISIBLE);
+        textView = (TextView)findViewById(R.id.textView2);
+        textView.setVisibility(View.VISIBLE);
 
         listView = (ListView) findViewById(R.id.listView2);
+        listView.setVisibility(View.INVISIBLE);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -68,30 +69,24 @@ public class FlashCardActivity extends FragmentActivity {
 
         findViewById(R.id.flashCardFrameLayout).setOnTouchListener(new OnSwipeTouchListener(FlashCardActivity.this) {
             public void onSwipeTop() {
-                Log.d(TAG, "top");
-                // showMeaning - This needs to be done on click
                 findViewById(R.id.textView2).setVisibility(View.INVISIBLE);
                 findViewById(R.id.listView2).setVisibility(View.VISIBLE);
-//                searchResults("mutter");
             }
             public void onSwipeRight() {
-                Log.d(TAG, "right-next word");
-//                    String word = DBManager.getDBManager().getNextWord();
-                String word = "Mutter";
+                String word = DBManager.getDBManager().getNextWordSortedByRevision("de", "en");
                 searchResults(word);
                 TextView textView = (TextView) findViewById(R.id.textView2);
                 textView.setText(word);
             }
             public void onSwipeLeft() {
-                String word = "previous word " + ++WordCounter;
+                String word = DBManager.getDBManager().getNextWordSortedByRevision("de", "en");
+                searchResults(word);
                 TextView textView = (TextView) findViewById(R.id.textView2);
                 textView.setText(word);
             }
+
             public void onSwipeBottom() {
-                Log.d(TAG, "down");
-                // showMeaning - This needs to be done on click
-                findViewById(R.id.textView2).setVisibility(View.VISIBLE);
-                findViewById(R.id.listView2).setVisibility(View.INVISIBLE);
+//                Log.d(TAG, "down");
             }
         });
     }
@@ -112,20 +107,19 @@ public class FlashCardActivity extends FragmentActivity {
         }
     };
 
+    private void showListView() {
+        findViewById(R.id.textView2).setVisibility(View.INVISIBLE);
+        findViewById(R.id.listView2).setVisibility(View.VISIBLE);
+    }
     private void searchResults(String sk) {
         final String searchKey = sk;
         if (sk == null) return;
         new Thread() {
             @Override
             public void run() {
-//                Snackbar.make(listView, "Searching...", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
                 if (mBoundService != null) {
                     try {
                         results = mBoundService.getResults(searchKey);
-//                        if (results.size() > 0) {
-//                            DBManager.getDBManager().saveInHistory(searchKey);
-//                        }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                         Snackbar.make(listView, "No source file", Snackbar.LENGTH_LONG)
@@ -158,19 +152,10 @@ public class FlashCardActivity extends FragmentActivity {
 
             DictEntryAdapter dictEntryAdapter = new DictEntryAdapter(this, keysArray, valuesArray);
             listView.setAdapter(dictEntryAdapter);
-            if (results.size() > 0) {
-//                Snackbar.make(listView, "Found " + results.size() + " entries", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-            } else {
-//                Snackbar.make(listView, "Nothing found ", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-            }
 
-        } else {
-//            Snackbar.make(listView, "No source file", Snackbar.LENGTH_LONG)
-//                    .setAction("Action", null).show();
         }
     }
+
     private String cleanUUID(String key) {
         return key.substring(36);
     }
@@ -182,7 +167,6 @@ public class FlashCardActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConnection);
-//        stopService(new Intent(this, DictionaryService.class));
         Log.d(TAG, "destroyed");
     }
 }
