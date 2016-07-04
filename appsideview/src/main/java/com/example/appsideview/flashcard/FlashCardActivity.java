@@ -54,7 +54,7 @@ public class FlashCardActivity extends FragmentActivity {
         startService(intent);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
-        textView = (TextView)findViewById(R.id.textView2);
+        textView = (TextView) findViewById(R.id.textView2);
         textView.setVisibility(View.VISIBLE);
 
         listView = (ListView) findViewById(R.id.listView2);
@@ -72,14 +72,26 @@ public class FlashCardActivity extends FragmentActivity {
                 findViewById(R.id.textView2).setVisibility(View.INVISIBLE);
                 findViewById(R.id.listView2).setVisibility(View.VISIBLE);
             }
+
             public void onSwipeRight() {
-                String word = DBManager.getDBManager().getNextWordSortedByRevision("de", "en");
+                String word = DBManager.getDBManager().getNextWordSortedByRevision(mBoundService.getLanguageFrom(), mBoundService.getLanguageTo());
+                if (word == null) {
+                    textView.setText("No word found.");
+                    return;
+                }
+
                 searchResults(word);
                 TextView textView = (TextView) findViewById(R.id.textView2);
                 textView.setText(word);
             }
+
             public void onSwipeLeft() {
-                String word = DBManager.getDBManager().getNextWordSortedByRevision("de", "en");
+                String word = DBManager.getDBManager().getNextWordSortedByRevision(mBoundService.getLanguageFrom(), mBoundService.getLanguageTo());
+                if (word == null) {
+                    textView.setText("No word found.");
+                    return;
+                }
+
                 searchResults(word);
                 TextView textView = (TextView) findViewById(R.id.textView2);
                 textView.setText(word);
@@ -102,7 +114,7 @@ public class FlashCardActivity extends FragmentActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             DictionaryService.LocalBinder myBinder = (DictionaryService.LocalBinder) service;
             mBoundService = myBinder.getService();
-            mBoundService.setLanguage("de-en");
+            Log.d(TAG, "Current language: " + mBoundService.getLanguageFrom());
             Log.d(TAG, "Service bound");
         }
     };
@@ -111,6 +123,7 @@ public class FlashCardActivity extends FragmentActivity {
         findViewById(R.id.textView2).setVisibility(View.INVISIBLE);
         findViewById(R.id.listView2).setVisibility(View.VISIBLE);
     }
+
     private void searchResults(String sk) {
         final String searchKey = sk;
         if (sk == null) return;
@@ -163,6 +176,7 @@ public class FlashCardActivity extends FragmentActivity {
     public void setDictionaryService(DictionaryService dictService) {
         this.mBoundService = dictService;
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -14,7 +14,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
+            android:text="Swipe Left/Right"
             android:id="@+id/textView2"
             android:layout_gravity="center"
             android:textAlignment="center"

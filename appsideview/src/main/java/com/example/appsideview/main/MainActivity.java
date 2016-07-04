@@ -136,7 +136,8 @@ public class MainActivity extends AppCompatActivity
                     try {
                         results = mBoundService.getResults(searchKey);
                         if (results.size() > 0) {
-                            DBManager.getDBManager().saveInHistory(searchKey, "de", "en");
+                            Log.d(TAG, "LangTo: " + mBoundService.getLanguageTo() + "LangFrom: " + mBoundService.getLanguageFrom());
+                            DBManager.getDBManager().saveInHistory(searchKey, mBoundService.getLanguageFrom(), mBoundService.getLanguageTo());
                         }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -226,34 +227,6 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setVisibility(View.INVISIBLE);
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//        if (id == R.id.de_en) {
-//            mBoundService.setLanguage("de-en");
-//        }
-//        if (id == R.id.en_de) {
-//            mBoundService.setLanguage("en-de");
-//        }
-//        if (id == R.id.es_de) {
-//            mBoundService.setLanguage("es-de");
-//        }
-//        if (id == R.id.de_es) {
-//            mBoundService.setLanguage("de-es");
-//        }
-//        if (id == R.id.en_es) {
-//            mBoundService.setLanguage("en-es");
-//        }
-////        if (id == R.id.action_flashcard) {
-////            fab.setVisibility(View.VISIBLE);
-////        }
-//        for (int i = 0; i < this.mainMenu.size(); i++) {
-//            this.mainMenu.getItem(i).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-//        }
-//        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onOptionsItemSelected(item);
     }
 
@@ -284,19 +257,6 @@ public class MainActivity extends AppCompatActivity
             MainActivity.this.startActivity(myIntent);
         }
 
-
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//        }
         for (int i = 0; i < this.mainMenu.size(); i++) {
             this.mainMenu.getItem(i).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         }

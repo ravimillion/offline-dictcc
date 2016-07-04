@@ -129,4 +129,8 @@ public class Dictionary {
     public void setLanguage(String language) {
         this.language = language;
     }
+
+    public String getLanguage() {
+        return this.language;
+    }
 }

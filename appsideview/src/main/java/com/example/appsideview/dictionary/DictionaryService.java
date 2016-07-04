@@ -49,11 +49,18 @@ public class DictionaryService extends Service implements ClipboardManager.OnPri
         return sortedResults;
     }
 
+    public String getLanguageTo() {
+        return this.dictionary.getLanguage().substring(3);
+    }
 
+    public String getLanguageFrom() {
+        return this.dictionary.getLanguage().substring(0, 2);
+    }
 
     public void setLanguage(String dir) {
         this.dictionary.setLanguage(dir);
     }
+
     public void onPrimaryClipChanged() {
         ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
         CharSequence copiedText = item.getText();

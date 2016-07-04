@@ -79,7 +79,7 @@ public class DBManager {
 
         printTable();
 
-        return "No Word";
+        return word;
     }
 
     public void saveInHistory(String word, String langFrom, String langTo) {
